@@ -1,26 +1,18 @@
 # Use minimal base image
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
 # Create non-root user
-RUN useradd -m appuser
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Set working directory
 WORKDIR /app
 
-# Copy files
+# Copy application
 COPY app.py .
 
-# Install only required packages
-RUN pip install --no-cache-dir flask
+# Set ownership
+RUN chown -R appuser:appgroup /app
 
-# Change ownership
-RUN chown -R appuser:appuser /app
-
-# Switch to non-root user
 USER appuser
 
-# Expose port
-EXPOSE 5000
-
-# Run app
+# Run application
 CMD ["python", "app.py"]
