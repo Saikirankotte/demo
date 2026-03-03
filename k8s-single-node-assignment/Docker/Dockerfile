@@ -1,18 +1,20 @@
-# Use minimal base image
-FROM python:3.11-alpine
+FROM python:3.12-slim AS builder
+WORKDIR /build
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-# Create non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
+FROM python:3.12-slim AS runtime
 WORKDIR /app
 
-# Copy application
+# Least Privilege Principle
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+COPY --from=builder /root/.local /home/appuser/.local
 COPY app.py .
 
-# Set ownership
-RUN chown -R appuser:appgroup /app
-
+# Ensure the appuser owns the files
+RUN chown -R appuser:appuser /app
+ENV PATH=/home/appuser/.local/bin:$PATH
 USER appuser
 
-# Run application
 CMD ["python", "app.py"]
