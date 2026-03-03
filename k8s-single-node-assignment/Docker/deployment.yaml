@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-hello-adb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-adb
+  template:
+    metadata:
+      labels:
+        app: hello-adb
+    spec:
+      containers:
+      - name: python-hello-adb
+        image: hello-adb:latest
+        imagePullPolicy: Never # Crucial: tells K8s to use the local image you just imported
