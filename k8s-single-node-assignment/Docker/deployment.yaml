@@ -13,6 +13,13 @@ spec:
         app: hello-adb
     spec:
       containers:
-      - name: python-hello-adb
-        image: hello-adb:latest
-        imagePullPolicy: Never # Crucial: tells K8s to use the local image you just imported
+        - name: python-hello-adb
+          image: hello-adb:1.0
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
